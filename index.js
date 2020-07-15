@@ -27,7 +27,7 @@ function processData(line) {
     dataBuffer = "";
 
     const {type, object} = watchEvent;
-    const namespacedName = `${object.metadata.namespace}/${object.metadata.name}`;
+    const namespacedName = getNamespacedName(object);
     prettyPrintEvent(type, namespacedName, object);
 
     if (type === "DELETED") {
@@ -69,4 +69,12 @@ function prettyPrintDiff(reversePatch, patch) {
             return segment.value;
         }
     }).join('');
+}
+
+function getNamespacedName(object) {
+    if (object.metadata.namespace) {
+        return `${object.metadata.namespace}/${object.metadata.name}`;
+    } else {
+        return object.metadata.name;
+    }
 }
