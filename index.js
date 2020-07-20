@@ -52,7 +52,11 @@ function processWatchEvent(watchEvent) {
 
 function prettyPrintEvent(type, namespacedName, object) {
     const time = dayjs().format();
-    console.log(`${chalk.gray(time)} ${chalk.bold(prettyPrintType(type) + ": ")} ${namespacedName}`)
+    console.log(`${chalk.gray(time)} ${chalk.bold(prettyPrintType(type) + ": ")} ${namespacedName || ""}`)
+
+    if (type === "ERROR") {
+        console.log("  ", JSON.stringify(object));
+    }
     if (type === "MODIFIED") {
         const patch = jsonmergepatch.generate(objects[namespacedName], object);
         const reversePatch = jsonmergepatch.generate(object, objects[namespacedName]);
@@ -67,6 +71,8 @@ function prettyPrintType(type) {
         return chalk.yellow(type);
     } else if (type === "DELETED") {
         return chalk.red(type);
+    } else if (type === "ERROR") {
+        return chalk.bgRed(chalk.white(type));
     } else {
         return type;
     }
