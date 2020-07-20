@@ -26,7 +26,20 @@ function processData(line) {
 
     dataBuffer = "";
 
+    processWatchEvent(watchEvent);
+}
+
+function processWatchEvent(watchEvent) {
     const {type, object} = watchEvent;
+
+    if (!object.metadata.name && object.items) {
+        // handle chunking
+        object.items.forEach(object => {
+            processWatchEvent({type, object});
+        })
+        return;
+    }
+
     const namespacedName = getNamespacedName(object);
     prettyPrintEvent(type, namespacedName, object);
 
